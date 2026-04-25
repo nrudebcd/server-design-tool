@@ -310,74 +310,6 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 .b1{background:rgba(0,180,216,0.1);color:var(--accent);border:1px solid rgba(0,180,216,0.4);}.b1:hover{background:rgba(0,180,216,0.18);box-shadow:0 4px 15px rgba(0,180,216,0.15);}
 .b2{background:rgba(163,113,247,0.1);color:var(--purple);border:1px solid rgba(163,113,247,0.4);}.b2:hover{background:rgba(163,113,247,0.18);box-shadow:0 4px 15px rgba(163,113,247,0.15);}
 
-.topbar-btn.update-data{
-  background:rgba(255,255,255,0.06);color:var(--text-muted);border-color:var(--card-border);
-}
-.topbar-btn.update-data:hover{background:rgba(255,255,255,0.1);color:var(--text);}
-.topbar-btn.update-data svg{fill:none;width:14px;height:14px;}
-
-/* ── ADMIN LOGIN MODAL ── */
-.modal-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,0.65);
-  display:none;align-items:center;justify-content:center;
-  z-index:200;backdrop-filter:blur(4px);
-}
-.modal-overlay.show{display:flex;}
-.modal{
-  background:var(--card);
-  border:1px solid var(--card-border);
-  border-radius:12px;
-  width:380px;max-width:90vw;
-  padding:36px 32px 28px;
-  box-shadow:0 20px 60px rgba(0,0,0,0.5);
-  text-align:center;
-  position:relative;
-}
-.modal .modal-logo{
-  width:52px;height:52px;border-radius:12px;
-  background:linear-gradient(135deg,#4a3aaa,#6c5ce7);
-  display:inline-flex;align-items:center;justify-content:center;
-  font-weight:800;font-size:13px;color:#fff;letter-spacing:0.5px;
-  margin-bottom:16px;
-}
-.modal h2{font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:4px;}
-.modal .modal-sub{font-size:0.78rem;color:var(--text-muted);margin-bottom:22px;}
-.modal-input{
-  width:100%;padding:11px 16px;
-  background:var(--input-bg);
-  border:1px solid var(--input-border);
-  border-radius:8px;color:#fff;font-size:0.86rem;
-  outline:none;transition:border 0.2s,box-shadow 0.2s;
-  margin-bottom:12px;
-}
-.modal-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-dim);}
-.modal-input::placeholder{color:var(--text-dim);}
-.modal-btn-signin{
-  width:100%;padding:12px;
-  background:#4a90d9;color:#fff;
-  border:none;border-radius:8px;
-  font-size:0.88rem;font-weight:700;
-  cursor:pointer;transition:background 0.2s;
-  margin-top:4px;
-}
-.modal-btn-signin:hover{background:#3a7bc8;}
-.modal-error{
-  font-size:0.75rem;color:var(--fail);
-  margin-top:10px;display:none;
-}
-.modal-error.show{display:block;}
-.modal-close{
-  position:absolute;top:12px;right:16px;
-  background:none;border:none;color:var(--text-dim);
-  font-size:1.3rem;cursor:pointer;padding:4px;line-height:1;
-}
-.modal-close:hover{color:var(--text);}
-.modal-lock-icon{
-  display:inline-flex;align-items:center;gap:4px;
-  font-size:0.62rem;color:var(--text-dim);margin-top:14px;
-}
-.modal-lock-icon svg{width:11px;height:11px;opacity:0.5;}
-
 /* ── TOAST ── */
 .toast{
   position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
@@ -431,7 +363,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
     <span class="logo-icon">BCD</span>
     <span class="logo-text">Server Design</span>
   </div>
-  <span class="topbar-tag">Server Design v4.0</span>
+  <span class="topbar-tag">Server Design v5.0</span>
   <div class="topbar-spacer"></div>
   <div class="topbar-actions">
 
@@ -447,29 +379,6 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
       <svg viewBox="0 0 16 16"><path d="M4 0h8v4H4zM2 5h12a2 2 0 012 2v4a2 2 0 01-2 2h-2v3H4v-3H2a2 2 0 01-2-2V7a2 2 0 012-2zm2 8v3h8v-3H4z"/></svg>
       Print
     </button>
-    <button class="topbar-btn update-data" onclick="showLoginModal()">
-      <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 8a7 7 0 0112.9-3.8M15 8a7 7 0 01-12.9 3.8"/><path d="M14 1v3.2h-3.2M2 15v-3.2h3.2"/></svg>
-      Update Data
-    </button>
-    <input type="file" id="xlsxAutoInput" accept=".xlsx,.xls" style="display:none" onchange="handleXlsxUpdate(event)">
-  </div>
-</div>
-
-<!-- ══════ ADMIN LOGIN MODAL ══════ -->
-<div class="modal-overlay" id="loginModal" onclick="if(event.target===this)hideLoginModal()">
-  <div class="modal">
-    <button class="modal-close" onclick="hideLoginModal()">&times;</button>
-    <div class="modal-logo">BCD</div>
-    <h2>Admin Access</h2>
-    <p class="modal-sub">Sign in to update configuration data</p>
-    <input class="modal-input" type="text" id="adminUser" placeholder="Username" autocomplete="off" onkeydown="if(event.key==='Enter')document.getElementById('adminPass').focus()">
-    <input class="modal-input" type="password" id="adminPass" placeholder="Password" onkeydown="if(event.key==='Enter')attemptLogin()">
-    <button class="modal-btn-signin" onclick="attemptLogin()">Sign In</button>
-    <div class="modal-error" id="loginError">Invalid username or password</div>
-    <div class="modal-lock-icon">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 6V4a4 4 0 118 0v2h1a1 1 0 011 1v7a1 1 0 01-1 1H3a1 1 0 01-1-1V7a1 1 0 011-1h1zm2-2a2 2 0 114 0v2H6V4z"/></svg>
-      Credentials required for data updates
-    </div>
   </div>
 </div>
 
@@ -498,7 +407,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
   <h1>BCD Server Design Tool</h1>
   <p class="subtitle">Recording Server Sizing, RAID Configuration &amp; Bill of Materials</p>
   <div class="page-tags">
-    <span class="tag blue">Design Tool v4.0</span>
+    <span class="tag blue">Design Tool v5.0</span>
     <span class="tag green">Auto-Sizing</span>
     <span class="tag purple">BOM Generator</span>
   </div>
@@ -592,11 +501,10 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 <button class="bn b2" onclick="window.print()"><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" style="flex-shrink:0"><path d="M4 0h8v4H4zM2 5h12a2 2 0 012 2v4a2 2 0 01-2 2h-2v3H4v-3H2a2 2 0 01-2-2V7a2 2 0 012-2zm2 8v3h8v-3H4z"/></svg>Print</button>
 </div></div>
 
-<p style="text-align:center;margin-top:20px;padding-bottom:20px;font-size:0.65rem;color:var(--text-dim);">BCD Server Design Tool v4.0 · bcdvideo.com</p>
+<p style="text-align:center;margin-top:20px;padding-bottom:20px;font-size:0.65rem;color:var(--text-dim);">BCD Server Design Tool v5.0 · bcdvideo.com</p>
 </div></div>
 
 <div class="toast" id="toast">Copied to clipboard</div>
-<div class="toast" id="dataToast" style="background:var(--green)">Data updated successfully</div>
 
 <!-- ══════ SCRIPT (unchanged logic) ══════ -->
 <script>
@@ -610,9 +518,9 @@ let R={
 24:{J:[null,21.8,43.7,65.5,87.3,109.1,131,152.8,174.6,196.344,218.3,240.1,261.9,283.8,305.6,327.4,349.2,371.1,392.9,414.7,436.6,458.4,480.2,502,523.9,545.7,567.5,589.4,611.2],5:[null,null,21.8,43.7,65.5,87.3,109.1,131,152.8,174.6,196.5,218.3,240.1,261.9,283.8,305.6,327.4,349.2,371.1,392.9,414.7,436.6,458.4,480.2,502,523.9,545.7,567.5,589.4],6:[null,null,null,null,43.7,65.5,87.3,109.1,131,152.8,174.6,196.5,218.3,240.1,261.9,283.8,305.6,327.4,349.2,371.1,392.9,414.7,436.6,458.4,480.2,502,523.9,545.7,567.5]}
 };
 const rk={"JBOD":"J","RAID 5":"5","RAID 6":"6"};
-let C=[{n:"BCD104 4 Bay",b:4,u:1,t:350,x:0},{n:"BCD104X 4 Bay",b:4,u:1,t:700,x:1},{n:"BCD212 12 Bay",b:12,u:2,t:1100,x:0},{n:"BCD212X 12 Bay",b:12,u:2,t:1600,x:1},{n:"BCD215 15 Bay",b:15,u:2,t:1100,x:0},{n:"BCD215X 15 Bay",b:15,u:2,t:1600,x:1},{n:"BCD228X 28 Bay",b:28,u:2,t:2400,x:1}];
+let C=[{n:"BCD104-325P 4 Bay",b:4,u:1,t:250,x:0},{n:"BCD104-349P 4 Bay",b:4,u:1,t:350,x:0},{n:"BCD104-410Y 4 Bay",b:4,u:1,t:700,x:1},{n:"BCD212 12 Bay",b:12,u:2,t:1100,x:0},{n:"BCD212X 12 Bay",b:12,u:2,t:1600,x:1},{n:"BCD215 15 Bay",b:15,u:2,t:1100,x:0},{n:"BCD215X 15 Bay",b:15,u:2,t:1600,x:1},{n:"BCD228X 28 Bay",b:28,u:2,t:2400,x:1}];
 let MC={"Avigilon":300,"Genetec":300,"Siveillance":300,"Hanwha":256,"Milestone":250,"ExacqVision":200,"Digital Watchdog":128,"March Networks":128};
-let SK={"BCD104 4 Bay-SATA":"BCD104-PVS-349P","BCD104X 4 Bay-SATA":"BCD104-PVS-410Y","BCD212 12 Bay-SATA":"BCD212-PVS-410Y","BCD212X 12 Bay-SATA":"BCD212X-PVS-410Y","BCD215 15 Bay-SATA":"BCD215-PVS-410Y","BCD215X 15 Bay-SATA":"BCD215X-PVS-410Y","BCD228X 28 Bay-SATA":"BCD228X-PVS-514Y","BCD104 4 Bay-SAS":"BCD104-EVS-349P","BCD104X 4 Bay-SAS":"BCD104-EVS-410Y","BCD212 12 Bay-SAS":"BCD212-EVS-410Y","BCD212X 12 Bay-SAS":"BCD212X-EVS-410Y","BCD215 15 Bay-SAS":"BCD215-EVS-410Y","BCD215X 15 Bay-SAS":"BCD215X-EVS-410Y","BCD228X 28 Bay-SAS":"BCD228X-EVS-514Y"};
+let SK={"BCD104-325P 4 Bay-SATA":"BCD104-PVS-325P","BCD104-349P 4 Bay-SATA":"BCD104-PVS-349P","BCD104-410Y 4 Bay-SATA":"BCD104-PVS-410Y","BCD212 12 Bay-SATA":"BCD212-PVS-410Y","BCD212X 12 Bay-SATA":"BCD212X-PVS-410Y","BCD215 15 Bay-SATA":"BCD215-PVS-410Y","BCD215X 15 Bay-SATA":"BCD215X-PVS-410Y","BCD228X 28 Bay-SATA":"BCD228X-PVS-514Y","BCD104-325P 4 Bay-SAS":"BCD104-EVS-325P","BCD104-349P 4 Bay-SAS":"BCD104-EVS-349P","BCD104-410Y 4 Bay-SAS":"BCD104-EVS-410Y","BCD212 12 Bay-SAS":"BCD212-EVS-410Y","BCD212X 12 Bay-SAS":"BCD212X-EVS-410Y","BCD215 15 Bay-SAS":"BCD215-EVS-410Y","BCD215X 15 Bay-SAS":"BCD215X-EVS-410Y","BCD228X 28 Bay-SAS":"BCD228X-EVS-514Y"};
 let HK={"8-SATA":"BCD-SA-8TB-SATA","12-SATA":"BCD-SA-12TB-SATA","16-SATA":"BCD-SA-16TB-SATA","20-SATA":"BCD-SA-20TB-SATA","24-SATA":"BCD-SA-24TB-SATA","8-SAS":"BCD-SA-8TB-SAS","12-SAS":"BCD-SA-12TB-SAS","16-SAS":"BCD-SA-16TB-SAS","20-SAS":"BCD-SA-20TB-SAS","24-SAS":"BCD-SA-24TB-SAS"};
 let MT=[{m:500,s:"BCD104-MVR-M-410Y-1.2T-SQL",r:"RAID 1"},{m:1500,s:"BCD108X-MVR-M-514Y-2.4T-SQL",r:"RAID 10"},{m:3000,s:"BCD108X-MVR-M-514Y-3.6T-SQL",r:"RAID 10"}];
 var chassisOverride=null;
@@ -745,280 +653,6 @@ catch(e){navigator.clipboard.writeText(plain).then(()=>{const t=document.getElem
 document.querySelectorAll('input,select').forEach(el=>{el.addEventListener('input',calc);el.addEventListener('change',calc);});
 calc();
 
-/* ══════ UPDATE DATA — EXCEL AUTO-LOAD ══════ */
-
-/* ── ADMIN LOGIN ── */
-/*  To change credentials, update the hash below.
-    Generate a new hash by running in browser console:
-      async function h(s){const e=new TextEncoder().encode(s);const b=await crypto.subtle.digest('SHA-256',e);return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
-      h('username:password').then(console.log)
-    Then replace the ADMIN_HASH value.
-*/
-const ADMIN_HASH='2c0b8cb53fb4166c56c98ad55b8a79183c3add58e34424b9e67bbfb25c762e5b';
-var adminUnlocked=false;
-
-async function hashCredentials(user,pass){
-  const str=user+':'+pass;
-  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(x=>x.toString(16).padStart(2,'0')).join('');
-}
-
-function showLoginModal(){
-  if(adminUnlocked){
-    document.getElementById('xlsxAutoInput').click();
-    return;
-  }
-  document.getElementById('adminUser').value='';
-  document.getElementById('adminPass').value='';
-  document.getElementById('loginError').classList.remove('show');
-  document.getElementById('loginModal').classList.add('show');
-  setTimeout(()=>document.getElementById('adminUser').focus(),100);
-}
-
-function hideLoginModal(){
-  document.getElementById('loginModal').classList.remove('show');
-}
-
-async function attemptLogin(){
-  const user=document.getElementById('adminUser').value.trim();
-  const pass=document.getElementById('adminPass').value;
-  if(!user||!pass){
-    document.getElementById('loginError').textContent='Please enter both fields';
-    document.getElementById('loginError').classList.add('show');
-    return;
-  }
-  const hash=await hashCredentials(user,pass);
-  if(hash===ADMIN_HASH){
-    adminUnlocked=true;
-    hideLoginModal();
-    showDataToast('✓ Authenticated — select your Excel file','info');
-    setTimeout(()=>document.getElementById('xlsxAutoInput').click(),300);
-  } else {
-    document.getElementById('loginError').textContent='Invalid username or password';
-    document.getElementById('loginError').classList.add('show');
-    document.getElementById('adminPass').value='';
-    document.getElementById('adminPass').focus();
-  }
-}
-
-/* Load SheetJS library on demand */
-var sheetJSLoaded=false;
-function loadSheetJS(cb){
-  if(sheetJSLoaded)return cb();
-  const s=document.createElement('script');
-  s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-  s.onload=function(){sheetJSLoaded=true;cb();};
-  s.onerror=function(){showDataToast('Could not load Excel parser — check internet','error');};
-  document.head.appendChild(s);
-}
-
-function showDataToast(msg,type){
-  const t=document.getElementById('dataToast');
-  t.textContent=msg;
-  t.style.background=type==='error'?'var(--fail)':type==='info'?'var(--accent)':'var(--green)';
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3000);
-}
-
-/* Handle clicking Update Data button → file picker */
-function handleXlsxUpdate(e){
-  const f=e.target.files[0];
-  if(!f){return;}
-  loadSheetJS(function(){
-    const reader=new FileReader();
-    reader.onload=function(ev){
-      try{
-        const wb=XLSX.read(ev.target.result,{type:'array'});
-        const data=parseWorkbook(wb);
-        applyData(data);
-        showDataToast('✓ Data updated from '+f.name+' — '+wb.SheetNames.length+' sheets loaded','success');
-      }catch(err){showDataToast('Excel error: '+err.message,'error');}
-    };
-    reader.readAsArrayBuffer(f);
-  });
-  e.target.value='';
-}
-
-/* Try to auto-load BCD_Server_Design_Data.xlsx from same folder on page load */
-function tryAutoLoad(){
-  loadSheetJS(function(){
-    /* Build the URL relative to the HTML file's location */
-    var base=window.location.href;
-    var lastSlash=base.lastIndexOf('/');
-    var folder=base.substring(0,lastSlash+1);
-    /* Try multiple common filenames */
-    var filenames=['BCD_Server_Design_Tool_Rev4.xlsx','Copy_of_BCD_Server_Design_Tool_Rev4.xlsx','BCD_Server_Design_Data.xlsx'];
-    var tried=0;
-    function tryNext(){
-      if(tried>=filenames.length)return;
-      var xlsxUrl=folder+filenames[tried];
-      tried++;
-      fetch(xlsxUrl).then(function(resp){
-        if(!resp.ok)throw new Error('not found');
-        return resp.arrayBuffer();
-      }).then(function(buf){
-        var wb=XLSX.read(buf,{type:'array'});
-        var data=parseWorkbook(wb);
-        applyData(data);
-        showDataToast('✓ Auto-loaded data from '+filenames[tried-1],'info');
-      }).catch(function(){
-        tryNext();
-      });
-    }
-    tryNext();
-  });
-}
-
-/* Apply parsed data to the tool's variables */
-function applyData(data){
-  if(data.raidTables){R=data.raidTables;}
-  if(data.chassis){C=data.chassis;}
-  if(data.maxCameras){MC=data.maxCameras;}
-  if(data.skuMap){SK=data.skuMap;}
-  if(data.driveSkus){HK=data.driveSkus;}
-  if(data.managementServers){MT=data.managementServers;}
-  /* Update VMS dropdown if new entries exist */
-  if(data.maxCameras){
-    const sel=document.getElementById('vms');
-    const curVal=sel.value;
-    const vmsNames=Object.keys(data.maxCameras);
-    sel.innerHTML=vmsNames.map(v=>'<option'+(v===curVal?' selected':'')+'>'+v+'</option>').join('');
-  }
-  /* Update drive size dropdown if new sizes exist */
-  if(data.raidTables){
-    const sel=document.getElementById('driveSize');
-    const curVal=sel.value;
-    const sizes=Object.keys(data.raidTables).sort((a,b)=>parseInt(a)-parseInt(b));
-    sel.innerHTML=sizes.map(s=>'<option value="'+s+'"'+(s===curVal?' selected':'')+'>'+s+' TB</option>').join('');
-  }
-  calc();
-}
-
-/* Parse the BCD Server Design Tool Rev4 Excel workbook */
-function parseWorkbook(wb){
-  const data={};
-  const sheets=wb.SheetNames;
-
-  /* ── RAID Tables sheet ──
-     Layout: 5 drive-size blocks side by side (24TB, 20TB, 16TB, 12TB, 8TB)
-     Each block: col offset has Drives, RAW, JBOD usable, RAID5 usable, RAID6 usable
-     Data rows: 7–34 (drives 1–28)
-     24TB: A=drives, C=JBOD, D=R5, E=R6
-     20TB: G=drives, I=JBOD, J=R5, K=R6
-     16TB: O=drives, Q=JBOD, R=R5, S=R6
-     12TB: W=drives, Y=JBOD, Z=R5, AA=R6
-      8TB: AE=drives, AG=JBOD, AH=R5, AI=R6
-  */
-  if(sheets.includes('RAID Tables')){
-    const ws=wb.Sheets['RAID Tables'];
-    const raw=XLSX.utils.sheet_to_json(ws,{header:1,defval:null});
-    const rt={};
-    const blocks=[
-      {ds:'24', drivesCol:0, jbod:2, r5:3, r6:4},
-      {ds:'20', drivesCol:6, jbod:8, r5:9, r6:10},
-      {ds:'16', drivesCol:14, jbod:16, r5:17, r6:18},
-      {ds:'12', drivesCol:22, jbod:24, r5:25, r6:26},
-      {ds:'8',  drivesCol:30, jbod:32, r5:33, r6:34}
-    ];
-    for(const blk of blocks){
-      const J=[null], R5=[null], R6=[null];
-      for(let r=6;r<=33;r++){  /* rows 7-34 in Excel = index 6-33 in 0-based */
-        const row=raw[r];
-        if(!row)continue;
-        const v_j=row[blk.jbod];
-        const v_5=row[blk.r5];
-        const v_6=row[blk.r6];
-        J.push(v_j!=null&&v_j!=='N/A'?parseFloat(v_j):null);
-        R5.push(v_5!=null&&v_5!=='N/A'?parseFloat(v_5):null);
-        R6.push(v_6!=null&&v_6!=='N/A'?parseFloat(v_6):null);
-      }
-      rt[blk.ds]={J:J,'5':R5,'6':R6};
-    }
-    data.raidTables=rt;
-  }
-
-  /* ── SKU Reference sheet ──
-     Row 1: headers (Category, Product Name, SKU, Description, Lookup Key)
-     Row 2+: data — we build skuMap from Lookup Key → SKU
-  */
-  if(sheets.includes('SKU Reference')){
-    const rows=XLSX.utils.sheet_to_json(wb.Sheets['SKU Reference']);
-    const sk={};
-    const hk={};
-    rows.forEach(r=>{
-      const key=r['Lookup Key']||'';
-      const sku=r['SKU']||'';
-      const cat=r['Category']||'';
-      if(!key||!sku)return;
-      if(cat==='Recording Server'){
-        sk[key]=sku;
-      } else if(cat==='Hard Drive'){
-        hk[key]=sku;
-      }
-    });
-    if(Object.keys(sk).length)data.skuMap=sk;
-    if(Object.keys(hk).length)data.driveSkus=hk;
-  }
-
-  /* ── Data Tables sheet ──
-     Management servers: rows 3-5 (B=MaxCameras, C=SKU, D=RAID)
-     GPU cards: rows 9-10 (B=Bandwidth threshold, C=SKU key, D=Description)
-  */
-  if(sheets.includes('Data Tables')){
-    const raw=XLSX.utils.sheet_to_json(wb.Sheets['Data Tables'],{header:1,defval:null});
-    const mt=[];
-    for(let r=2;r<=4;r++){
-      const row=raw[r];
-      if(row&&row[1]!=null&&row[2]!=null){
-        mt.push({m:parseInt(row[1]),s:String(row[2]),r:row[3]?String(row[3]):''});
-      }
-    }
-    if(mt.length)data.managementServers=mt;
-  }
-
-  /* ── Engineering sheet — Max Cameras & Chassis specs ──
-     Row 12 (B12): Max Cameras per Server value is in C12
-     Rows 16-22 (F16:I22): Chassis throughput mapping
-     Rows 5-11 (F5:K11): Max usable storage by chassis for RAID 5
-  */
-  if(sheets.includes('Engineering')){
-    const raw=XLSX.utils.sheet_to_json(wb.Sheets['Engineering'],{header:1,defval:null});
-    
-    /* Chassis from throughput mapping: rows 16-22 (index 15-21) 
-       F=throughput label, G=chassis name, H=bays, I=RU */
-    const chassis=[];
-    const throughputMap={};
-    for(let r=15;r<=21;r++){
-      const row=raw[r];
-      if(!row||!row[6])continue;
-      const name=String(row[6]);
-      let tpStr=String(row[5]||'');
-      /* Parse throughput: "350 Mbps" or "1,100 Mbps" or "2,400 Mbps" */
-      const tp=parseInt(tpStr.replace(/[^0-9]/g,''))||0;
-      const bays=parseInt(row[7])||0;
-      const ruStr=String(row[8]||'');
-      const ru=parseInt(ruStr)||1;
-      const isX=name.includes('X')?1:0;
-      chassis.push({n:name+' '+bays+' Bay',b:bays,u:ru,t:tp,x:isX});
-      throughputMap[name]=tp;
-    }
-    if(chassis.length)data.chassis=chassis;
-  }
-
-  /* ── Engineering sheet — VMS Max Camera lookup from row 12 comment ──
-     We parse the description in E12 for the mapping, or use the known defaults.
-     For now, check if Sales sheet has VMS list with camera limits
-  */
-  if(sheets.includes('Sales')){
-    const raw=XLSX.utils.sheet_to_json(wb.Sheets['Sales'],{header:1,defval:null});
-    /* Look for max cameras data — typically in a lookup or validation area */
-  }
-
-  return data;
-}
-
-/* Auto-load on page ready */
-window.addEventListener('load',function(){setTimeout(tryAutoLoad,500);});
 </script>
 </body>
 </html>
