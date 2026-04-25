@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>BCD Server Design Tool</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{
   --bg:#0a0e14;
@@ -310,6 +311,45 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 .b1{background:rgba(0,180,216,0.1);color:var(--accent);border:1px solid rgba(0,180,216,0.4);}.b1:hover{background:rgba(0,180,216,0.18);box-shadow:0 4px 15px rgba(0,180,216,0.15);}
 .b2{background:rgba(163,113,247,0.1);color:var(--purple);border:1px solid rgba(163,113,247,0.4);}.b2:hover{background:rgba(163,113,247,0.18);box-shadow:0 4px 15px rgba(163,113,247,0.15);}
 
+/* ── ADMIN & UPLOAD ── */
+.topbar-btn.update-data{background:rgba(255,255,255,0.06);color:var(--text-muted);border-color:var(--card-border);}
+.topbar-btn.update-data:hover{background:rgba(255,255,255,0.1);color:var(--text);}
+.topbar-btn.export-btn{background:rgba(63,185,80,0.1);color:var(--green);border-color:rgba(63,185,80,0.4);}
+.topbar-btn.export-btn:hover{background:rgba(63,185,80,0.18);}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);display:none;align-items:center;justify-content:center;z-index:200;backdrop-filter:blur(4px);}
+.overlay.show{display:flex;}
+.modal{background:var(--card);border:1px solid var(--card-border);border-radius:12px;width:400px;max-width:90vw;padding:36px 32px 28px;box-shadow:0 20px 60px rgba(0,0,0,0.5);text-align:center;position:relative;}
+.modal .ml{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,#4a3aaa,#6c5ce7);display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff;letter-spacing:0.5px;margin-bottom:16px;}
+.modal h2{font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:4px;}
+.modal .ms{font-size:0.78rem;color:var(--text-muted);margin-bottom:22px;}
+.mi{width:100%;padding:11px 16px;background:var(--input-bg);border:1px solid var(--input-border);border-radius:8px;color:#fff;font-size:0.86rem;outline:none;transition:border 0.2s;margin-bottom:12px;}
+.mi:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-dim);}
+.mi::placeholder{color:var(--text-dim);}
+.mb{width:100%;padding:12px;background:#4a90d9;color:#fff;border:none;border-radius:8px;font-size:0.88rem;font-weight:700;cursor:pointer;margin-top:4px;}
+.mb:hover{background:#3a7bc8;}
+.merr{font-size:0.75rem;color:var(--fail);margin-top:10px;min-height:18px;}
+.mcl{position:absolute;top:12px;right:16px;background:none;border:none;color:var(--text-dim);font-size:1.3rem;cursor:pointer;line-height:1;}
+.mcl:hover{color:var(--text);}
+.upload-screen{position:fixed;inset:0;background:var(--bg);display:none;z-index:150;overflow-y:auto;}
+.upload-screen.show{display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.upload-inner{max-width:500px;width:90%;text-align:center;}
+.upload-inner h2{color:#fff;font-size:1.3rem;margin-bottom:6px;}
+.upload-inner .us{color:var(--text-muted);font-size:0.82rem;margin-bottom:20px;}
+.dz{border:2px dashed var(--card-border);border-radius:12px;padding:40px 20px;cursor:pointer;transition:all 0.2s;margin-bottom:16px;}
+.dz:hover,.dz.over{border-color:var(--accent);background:rgba(0,180,216,0.04);}
+.dz .di{font-size:2rem;margin-bottom:8px;}
+.dz .dt{font-size:0.82rem;color:var(--text-muted);}
+.dz .dt strong{color:var(--accent);}
+.fchips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px;min-height:28px;}
+.fchip{background:rgba(0,180,216,0.1);color:var(--accent);border:1px solid rgba(0,180,216,0.3);padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:600;display:flex;align-items:center;gap:6px;}
+.fchip .fx{cursor:pointer;opacity:0.6;font-size:1rem;}.fchip .fx:hover{opacity:1;}
+.ubtn{padding:10px 24px;border:none;border-radius:8px;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.2s;margin:4px;}
+.ubtn.go{background:var(--accent);color:#fff;opacity:0.4;pointer-events:none;}
+.ubtn.go.ready{opacity:1;pointer-events:auto;}
+.ubtn.go.ready:hover{background:#0096b7;}
+.ubtn.cancel{background:rgba(255,255,255,0.06);color:var(--text-muted);border:1px solid var(--card-border);}
+.ubtn.cancel:hover{background:rgba(255,255,255,0.1);}
+
 /* ── TOAST ── */
 .toast{
   position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
@@ -379,6 +419,47 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
       <svg viewBox="0 0 16 16"><path d="M4 0h8v4H4zM2 5h12a2 2 0 012 2v4a2 2 0 01-2 2h-2v3H4v-3H2a2 2 0 01-2-2V7a2 2 0 012-2zm2 8v3h8v-3H4z"/></svg>
       Print
     </button>
+    <button class="topbar-btn update-data" onclick="requestUpdate()">
+      <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" transform="scale(0.67)"/></svg>
+      Update Data
+    </button>
+    <button class="topbar-btn export-btn" onclick="requestExport()">
+      <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" transform="scale(0.67)"/></svg>
+      Export HTML
+    </button>
+  </div>
+</div>
+
+<!-- ══════ ADMIN LOGIN ══════ -->
+<div class="overlay" id="loginScreen" onclick="if(event.target===this)hideLogin()">
+  <div class="modal">
+    <button class="mcl" onclick="hideLogin()">&times;</button>
+    <div class="ml">BCD</div>
+    <h2>Admin Access</h2>
+    <p class="ms">Sign in to update configuration data</p>
+    <input class="mi" type="text" id="loginUser" placeholder="Username" autocomplete="off">
+    <input class="mi" type="password" id="loginPass" placeholder="Password">
+    <button class="mb" onclick="doLogin()">Sign In</button>
+    <div class="merr" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- ══════ UPLOAD SCREEN ══════ -->
+<div class="upload-screen" id="uploadScreen">
+  <div class="upload-inner">
+    <div class="ml" style="width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,#4a3aaa,#6c5ce7);display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff;margin-bottom:16px;">BCD</div>
+    <h2>Update Design Tool Data</h2>
+    <p class="us">Drop your Excel file to update RAID tables, chassis specs, SKUs, and management servers</p>
+    <div class="dz" id="dropZone">
+      <div class="di">📊</div>
+      <div class="dt">Drag &amp; drop <strong>.xlsx file</strong> here or click to browse</div>
+    </div>
+    <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none">
+    <div class="fchips" id="fileChips"></div>
+    <div>
+      <button class="ubtn go" id="processBtn" onclick="processFile()">Process &amp; Update</button>
+      <button class="ubtn cancel" onclick="cancelUpload()">Cancel</button>
+    </div>
   </div>
 </div>
 
@@ -653,6 +734,184 @@ catch(e){navigator.clipboard.writeText(plain).then(()=>{const t=document.getElem
 document.querySelectorAll('input,select').forEach(el=>{el.addEventListener('input',calc);el.addEventListener('change',calc);});
 calc();
 
+/* ══════ ADMIN AUTH ══════ */
+const AUTH_HASH='2c0b8cb53fb4166c56c98ad55b8a79183c3add58e34424b9e67bbfb25c762e5b';
+let adminAuthed=false;
+if(sessionStorage.getItem('bcd_sdt_admin')==='1')adminAuthed=true;
+
+async function hashCred(u,p){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(u+':'+p));
+  return Array.from(new Uint8Array(buf)).map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+function showLogin(){
+  document.getElementById('loginScreen').classList.add('show');
+  document.getElementById('loginUser').value='';
+  document.getElementById('loginPass').value='';
+  document.getElementById('loginErr').textContent='';
+  setTimeout(()=>document.getElementById('loginUser').focus(),100);
+}
+function hideLogin(){document.getElementById('loginScreen').classList.remove('show');}
+async function doLogin(){
+  const u=document.getElementById('loginUser').value.trim();
+  const p=document.getElementById('loginPass').value;
+  if(!u||!p){document.getElementById('loginErr').textContent='Please enter both fields';return;}
+  const h=await hashCred(u,p);
+  if(h===AUTH_HASH){
+    adminAuthed=true;sessionStorage.setItem('bcd_sdt_admin','1');hideLogin();
+    if(window._pendingExport){window._pendingExport=false;doExport();}
+    else{showUpload();}
+  }else{
+    document.getElementById('loginErr').textContent='Invalid username or password';
+    document.getElementById('loginPass').value='';
+  }
+}
+document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('loginUser').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('loginPass').focus();});
+
+function requestUpdate(){if(adminAuthed){showUpload();}else{showLogin();}}
+function requestExport(){if(adminAuthed){doExport();}else{window._pendingExport=true;showLogin();}}
+
+/* ══════ UPLOAD SCREEN ══════ */
+let pendingFile=null;
+const dz=document.getElementById('dropZone');
+const fileIn=document.getElementById('fileInput');
+dz.addEventListener('click',()=>fileIn.click());
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');addFile(e.dataTransfer.files);});
+fileIn.addEventListener('change',()=>{addFile(fileIn.files);fileIn.value='';});
+
+function addFile(files){
+  for(const f of files){if(f.name.match(/\.xlsx?$/i)){pendingFile=f;break;}}
+  renderChip();
+}
+function renderChip(){
+  const ch=document.getElementById('fileChips');
+  ch.innerHTML=pendingFile?'<span class="fchip">'+pendingFile.name+' <span class="fx" onclick="pendingFile=null;renderChip()">×</span></span>':'';
+  document.getElementById('processBtn').classList.toggle('ready',!!pendingFile);
+}
+function showUpload(){
+  document.getElementById('uploadScreen').classList.add('show');
+  pendingFile=null;renderChip();
+}
+function cancelUpload(){document.getElementById('uploadScreen').classList.remove('show');}
+
+function processFile(){
+  if(!pendingFile)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      const wb=XLSX.read(ev.target.result,{type:'array'});
+      const data=parseWorkbook(wb);
+      applyData(data);
+      document.getElementById('uploadScreen').classList.remove('show');
+      showToast('✓ Data updated from '+pendingFile.name);
+    }catch(err){showToast('Error: '+err.message);}
+  };
+  reader.readAsArrayBuffer(pendingFile);
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+/* ══════ PARSE EXCEL ══════ */
+function parseWorkbook(wb){
+  const data={};const sheets=wb.SheetNames;
+  if(sheets.includes('RAID Tables')){
+    const raw=XLSX.utils.sheet_to_json(wb.Sheets['RAID Tables'],{header:1,defval:null});
+    const rt={};
+    const blocks=[{ds:'24',jbod:2,r5:3,r6:4},{ds:'20',jbod:8,r5:9,r6:10},{ds:'16',jbod:16,r5:17,r6:18},{ds:'12',jbod:24,r5:25,r6:26},{ds:'8',jbod:32,r5:33,r6:34}];
+    for(const blk of blocks){
+      const J=[null],R5=[null],R6=[null];
+      for(let r=6;r<=33;r++){const row=raw[r];if(!row)continue;
+        const vj=row[blk.jbod],v5=row[blk.r5],v6=row[blk.r6];
+        J.push(vj!=null&&vj!=='N/A'?parseFloat(vj):null);
+        R5.push(v5!=null&&v5!=='N/A'?parseFloat(v5):null);
+        R6.push(v6!=null&&v6!=='N/A'?parseFloat(v6):null);
+      }
+      rt[blk.ds]={J:J,'5':R5,'6':R6};
+    }
+    data.raidTables=rt;
+  }
+  if(sheets.includes('SKU Reference')){
+    const rows=XLSX.utils.sheet_to_json(wb.Sheets['SKU Reference']);
+    const sk={},hk={};
+    rows.forEach(r=>{const key=r['Lookup Key']||'',sku=r['SKU']||'',cat=r['Category']||'';
+      if(!key||!sku)return;
+      if(cat==='Recording Server')sk[key]=sku;
+      else if(cat==='Hard Drive')hk[key]=sku;
+    });
+    if(Object.keys(sk).length)data.skuMap=sk;
+    if(Object.keys(hk).length)data.driveSkus=hk;
+  }
+  if(sheets.includes('Data Tables')){
+    const raw=XLSX.utils.sheet_to_json(wb.Sheets['Data Tables'],{header:1,defval:null});
+    const mt=[];
+    for(let r=2;r<=4;r++){const row=raw[r];if(row&&row[1]!=null&&row[2]!=null)mt.push({m:parseInt(row[1]),s:String(row[2]),r:row[3]?String(row[3]):''});}
+    if(mt.length)data.managementServers=mt;
+  }
+  return data;
+}
+
+function applyData(data){
+  if(data.raidTables)R=data.raidTables;
+  if(data.skuMap)SK=data.skuMap;
+  if(data.driveSkus)HK=data.driveSkus;
+  if(data.managementServers)MT=data.managementServers;
+  if(data.raidTables){
+    const sel=document.getElementById('driveSize');const cv=sel.value;
+    const sizes=Object.keys(data.raidTables).sort((a,b)=>parseInt(a)-parseInt(b));
+    sel.innerHTML=sizes.map(s=>'<option value="'+s+'"'+(s===cv?' selected':'')+'>'+s+' TB</option>').join('');
+  }
+  calc();
+}
+
+/* ══════ EXPORT HTML ══════ */
+function doExport(){
+  showToast('Generating HTML...');
+  setTimeout(function(){
+    var src=document.documentElement.outerHTML;
+    var m1='let R=';var m2=';\nconst rk=';
+    var i1=src.indexOf(m1);var i2=src.indexOf(m2,i1);
+    if(i1===-1||i2===-1){showToast('Export failed — could not locate data block');return;}
+    var freshR=JSON.stringify(R);
+    var newSrc='<!DOCTYPE html>\n<html lang="en">'+src.substring(src.indexOf('<head>'),i1)+m1+freshR+src.substring(i2);
+    var pairs=[
+      ['let C='+JSON.stringify(C).replace(/"/g,'"'),'let C='+JSON.stringify(C)],
+      ['let SK='+findCurrentVal(src,'let SK='),'let SK='+JSON.stringify(SK)],
+      ['let HK='+findCurrentVal(src,'let HK='),'let HK='+JSON.stringify(HK)],
+      ['let MT='+findCurrentVal(src,'let MT='),'let MT='+JSON.stringify(MT)],
+      ['let MC='+findCurrentVal(src,'let MC='),'let MC='+JSON.stringify(MC)]
+    ];
+    for(var p of pairs){if(p[0]!==p[1]&&newSrc.indexOf(p[0])!==-1)newSrc=newSrc.replace(p[0],p[1]);}
+    var today=new Date();
+    var ds=(today.getMonth()+1)+'/'+today.getDate()+'/'+today.getFullYear();
+    newSrc=newSrc.replace('Server Design v5.0','Server Design v5.0 — Updated '+ds);
+    var blob=new Blob([newSrc],{type:'text/html'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=url;a.download='index.html';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('✓ Exported as index.html — upload to GitHub to deploy');
+  },100);
+}
+
+function findCurrentVal(src,marker){
+  var i=src.indexOf(marker);if(i===-1)return'{}';
+  var start=i+marker.length;
+  var depth=0,inStr=false,esc=false;
+  for(var j=start;j<src.length;j++){
+    var ch=src[j];
+    if(esc){esc=false;continue;}
+    if(ch==='\\'){esc=true;continue;}
+    if(ch==='"'&&!esc)inStr=!inStr;
+    if(!inStr){
+      if(ch==='{'||ch==='[')depth++;
+      if(ch==='}'||ch===']'){depth--;if(depth===0)return src.substring(start,j+1);}
+    }
+  }
+  return'{}';
+}
 </script>
 </body>
 </html>
